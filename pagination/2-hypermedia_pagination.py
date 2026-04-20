@@ -4,7 +4,8 @@ Module providing a helper function for pagination.
 """
 
 import csv
-from typing import List, Tuple
+import math
+from typing import Dict, List, Tuple
 
 
 def index_range(page: int, page_size: int) -> tuple[int, int]:
