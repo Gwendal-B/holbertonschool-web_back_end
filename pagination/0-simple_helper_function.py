@@ -3,7 +3,8 @@
 Module providing a helper function for pagination.
 """
 
-def index_range(page: int, page_size: int) -> tuple:
+
+def index_range(page: int, page_size: int) -> tuple[int, int]:
     """
     Returns a tuple of size two containing the start index
     and end index for a given pagination page and page size.
@@ -15,7 +16,7 @@ def index_range(page: int, page_size: int) -> tuple:
     Returns:
         tuple: A tuple (start_index, end_index).
     """
-    start_index = (page - 1) * page_size
-    end_index = page * page_size
+    start = (page - 1) * page_size
+    end = page * page_size
 
-    return (start_index, end_index)
+    return (start, end)
