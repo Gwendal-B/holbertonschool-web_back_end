@@ -6,7 +6,9 @@ function countStudents(path) {
   try {
     data = fs.readFileSync(path, 'utf8');
   } catch (error) {
-    throw new Error('Cannot load the database');
+    if (error) {
+      throw new Error('Cannot load the database');
+    }
   }
 
   const lines = data
@@ -14,7 +16,6 @@ function countStudents(path) {
     .filter((line) => line.trim() !== '');
 
   const students = lines.slice(1);
-
   console.log(`Number of students: ${students.length}`);
 
   const fields = {};
@@ -30,9 +31,10 @@ function countStudents(path) {
   });
 
   Object.keys(fields).forEach((field) => {
-    console.log(
-      `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`
-    );
+    const number = fields[field].length;
+    const list = fields[field].join(', ');
+
+    console.log(`Number of students in ${field}: ${number}. List: ${list}`);
   });
 }
 
