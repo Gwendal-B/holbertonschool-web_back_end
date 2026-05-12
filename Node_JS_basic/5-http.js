@@ -1,6 +1,8 @@
 const http = require('http');
 const fs = require('fs');
 
+const database = process.argv[2];
+
 function countStudents(path) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, 'utf8', (error, data) => {
@@ -9,16 +11,10 @@ function countStudents(path) {
         return;
       }
 
-      const lines = data
-        .split('\n')
-        .filter((line) => line.trim() !== '');
-
+      const lines = data.split('\n').filter((line) => line.trim() !== '');
       const students = lines.slice(1);
-
-      const output = [];
-      output.push(`Number of students: ${students.length}`);
-
       const fields = {};
+      const output = [`Number of students: ${students.length}`];
 
       students.forEach((student) => {
         const [firstname, , , field] = student.split(',');
@@ -33,10 +29,9 @@ function countStudents(path) {
       Object.keys(fields).forEach((field) => {
         const number = fields[field].length;
         const list = fields[field].join(', ');
+        const message = `Number of students in ${field}: ${number}. List: ${list}`;
 
-        output.push(
-          `Number of students in ${field}: ${number}. List: ${list}`
-        );
+        output.push(message);
       });
 
       resolve(output.join('\n'));
@@ -45,19 +40,17 @@ function countStudents(path) {
 }
 
 const app = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/plain');
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
 
   if (req.url === '/') {
-    res.statusCode = 200;
     res.end('Hello Holberton School!');
-  } else if (req.url === '/students') {
-    const database = process.argv[2];
+    return;
+  }
 
-    res.statusCode = 200;
-
+  if (req.url === '/students') {
     countStudents(database)
-      .then((data) => {
-        res.end(`This is the list of our students\n${data}`);
+      .then((students) => {
+        res.end(`This is the list of our students\n${students}`);
       })
       .catch((error) => {
         res.end(`This is the list of our students\n${error.message}`);
